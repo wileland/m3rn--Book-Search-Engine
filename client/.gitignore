@@ -1,22 +1,16 @@
-# Production build
-/build/
-/dist/
-
 # Dependency directories
 /client/node_modules/
 
-# Development env files
+# Environment configuration files (if any)
 /client/.env.local
 /client/.env.development.local
+/client/.env.test.local
+/client/.env.production.local
 
-# Cache files
-/client/.cache/
-/client/public/sw.js
-/client/src/serviceWorker.js
+# Production build directory
+/build
 
-# Misc
-/client/npm-debug.log*
-/client/yarn-debug.log*
-/client/yarn-error.log*
-/client/.eslintcache
+# System Files
+.DS_Store
+
 

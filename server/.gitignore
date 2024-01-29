@@ -1,7 +1,7 @@
 # Dependency directories
 /server/node_modules/
 
-# Environment config files
+# Environment configuration files
 /server/.env
 /server/.env.local
 
@@ -12,12 +12,10 @@
 /server/yarn-debug.log*
 /server/yarn-error.log*
 
-# Misc
-/server/.eslintcache
-/server/*.pid
-/server/*.pid.lock
-/server/*.seed
-/server/*.log
-/server/npm-debug.log*
-/server/yarn-debug.log*
-/server/yarn-error.log*
+# Compiled source #
+###################
+/dist
+/build
+
+# System Files
+.DS_Store
