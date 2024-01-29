@@ -1,18 +1,22 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server for the MERN Book Search Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "watch": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "graphql",
+    "express",
+    "apollo",
+    "server"
+  ],
+  "author": "William L. Haynes",
+  "license": "MIT",
   "dependencies": {
     "apollo-server-express": "^3.13.0",
-    "bcrypt": "^4.0.1",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "graphql": "^16.8.1",
