@@ -1,12 +1,18 @@
-const router = require('express').Router();
-const path = require('path');
-const apiRoutes = require('./api');
+const router = require("express").Router();
+const path = require("path");
+const apiRoutes = require("./api");
 
-router.use('/api', apiRoutes);
+// API routes
+router.use("/api", apiRoutes);
 
-// serve up react front-end in production
-router.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/build/index.html'));
+// Serve the React front-end in production
+router.use((req, res, next) => {
+  try {
+    res.sendFile(path.join(__dirname, "../../client/build/index.html"));
+  } catch (error) {
+    // Handle errors or log them
+    next(error);
+  }
 });
 
 module.exports = router;

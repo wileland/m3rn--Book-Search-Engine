@@ -1,5 +1,18 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/googlebooks');
+// Define the MongoDB connection string from the environment variable
+const mongoDBUri =
+  process.env.DB_URI || "mongodb://127.0.0.1:27017/googlebooks";
 
+mongoose
+  .connect(mongoDBUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Successfully connected to MongoDB."))
+  .catch((err) => {
+    console.error("Connection error", err.message);
+  });
+
+// Export the connection
 module.exports = mongoose.connection;
