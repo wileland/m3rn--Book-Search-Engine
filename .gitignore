@@ -1,0 +1,49 @@
+# Dependency directories
+node_modules/
+
+# Environment variables and config files
+.env
+.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+# Lock files
+package-lock.json
+yarn.lock
+
+# Compiled files
+**/*.tsbuildinfo
+**/*.happypack
+**/*.hot-update.js
+**/*.hot-update.json
+
+# Misc
+**/.sass-cache
+**/.parcel-cache
+**/.next
+**/.nuxt
+**/.cache
+**/.vuepress
+**/.serverless
+**/.fusebox
+**/.dynamodb
