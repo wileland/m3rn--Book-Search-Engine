@@ -1,11 +1,18 @@
-const { ApolloServer } = require("apollo-server-express");
 const typeDefs = require("./typeDefs");
 const userResolvers = require("./resolvers/user-resolvers");
 const bookResolvers = require("./resolvers/book-resolvers");
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers: [userResolvers, bookResolvers],
-});
+// Combine user and book resolvers into a single object
+const resolvers = {
+  Query: {
+    ...userResolvers.Query,
+    ...bookResolvers.Query,
+  },
+  Mutation: {
+    ...userResolvers.Mutation,
+    ...bookResolvers.Mutation,
+  },
+  // Add other resolver types if they exist, such as Subscription
+};
 
-module.exports = server;
+module.exports = { typeDefs, resolvers };

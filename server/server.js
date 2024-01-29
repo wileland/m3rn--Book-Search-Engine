@@ -2,45 +2,44 @@ const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const path = require("path");
 const db = require("./config/connection");
-const routes = require("./routes");
-const { typeDefs, resolvers } = require("./schemas"); // Assuming you have typeDefs and resolvers defined in separate files
+const { typeDefs, resolvers } = require("./schema");
+const { authMiddleware } = require("./utils/auth");
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+async function startApolloServer() {
+  const app = express();
+  const PORT = process.env.PORT || 3001;
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({ req }) => {
-    // Add authentication logic here if needed
-  },
-});
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: async ({ req }) => {
+      // Use the authMiddleware to populate the user in the context
+      const context = await authMiddleware(req);
+      return context;
+    },
+  });
 
-// Middleware for parsing JSON and URL-encoded data
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+  await server.start();
+  server.applyMiddleware({ app });
 
-// Serve static assets if in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/build")));
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
 
-  // For any routes that are not API routes, return the React app's "index.html"
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+  if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "../client/build")));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+    });
+  }
+
+  db.once("open", () => {
+    app.listen(PORT, () => {
+      console.log(`🌍 Now listening on localhost:${PORT}`);
+      console.log(
+        `GraphQL available at http://localhost:${PORT}${server.graphqlPath}`
+      );
+    });
   });
 }
 
-// Use your defined routes
-app.use(routes);
-
-// Apply Apollo Server as middleware
-server.applyMiddleware({ app });
-
-// Database connection
-db.once("open", () => {
-  console.log("Connected to the database");
-  // Start the server once the database is connected
-  app.listen(PORT, () => {
-    console.log(`🌍 Now listening on localhost:${PORT}`);
-  });
-});
+startApolloServer();

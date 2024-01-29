@@ -7,42 +7,35 @@ const resolvers = {
       const params = username ? { username } : {};
       return Book.find(params).sort({ createdAt: -1 });
     },
-
     book: async (parent, { bookId }) => {
       return Book.findOne({ bookId });
     },
   },
-
   Mutation: {
     addBook: async (parent, { input }, context) => {
       if (context.user) {
-        const book = await Book.create({
-          ...input,
-          username: context.user.username,
-        });
+        const book = await Book.create({ ...input });
         await User.findByIdAndUpdate(
           { _id: context.user._id },
-          { $addToSet: { books: book._id } }
+          { $addToSet: { savedBooks: book._id } },
+          { new: true }
         );
         return book;
       }
-
       throw new AuthenticationError("You need to be logged in to add a book.");
     },
-
     removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
-        const book = await Book.findOneAndDelete({
-          _id: bookId,
-          username: context.user.username,
-        });
-        await User.findByIdAndUpdate(
+        const update = await User.findByIdAndUpdate(
           { _id: context.user._id },
-          { $pull: { books: bookId } }
+          { $pull: { savedBooks: { bookId } } },
+          { new: true }
         );
-        return book;
+        if (!update) {
+          throw new Error("Book not found or user not authorized.");
+        }
+        return update;
       }
-
       throw new AuthenticationError(
         "You need to be logged in to remove a book."
       );
