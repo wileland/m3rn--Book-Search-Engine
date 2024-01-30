@@ -24,5 +24,23 @@ export const LOGIN_USER = gql`
     }
   }
 `;
+export const SAVE_BOOK = gql`
+  mutation SaveBook($input: BookInput!) {
+    saveBook(input: $input) {
+      _id
+      username
+      email
+      savedBooks {
+        bookId
+        authors
+        description
+        title
+        image
+        link
+      }
+    }
+  }
+`;
 
-// Add more mutations as needed
+// You can add more mutations below as needed.
+

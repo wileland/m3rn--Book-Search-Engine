@@ -26,11 +26,11 @@ const resolvers = {
     },
     removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
-        const update = await User.findByIdAndUpdate(
+        const update = await User.findOneAndUpdate(
           { _id: context.user._id },
           { $pull: { savedBooks: { bookId } } },
           { new: true }
-        );
+        ).populate("savedBooks");
         if (!update) {
           throw new Error("Book not found or user not authorized.");
         }

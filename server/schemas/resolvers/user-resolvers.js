@@ -24,7 +24,7 @@ const resolvers = {
       return { token, user };
     },
     login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).select("+password");
       if (!user) {
         throw new AuthenticationError("Incorrect credentials");
       }
@@ -33,7 +33,7 @@ const resolvers = {
         throw new AuthenticationError("Incorrect credentials");
       }
       const token = signToken(user);
-      return { token, user };
+      return { token, user: user.toObject({ virtuals: true }) }; // Convert document to object
     },
   },
 };
