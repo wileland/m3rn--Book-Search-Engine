@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+// Removed unused React import since React 17+ and new JSX Transform do not require it
+import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
-
 import { useMutation } from "@apollo/client";
-import { LOGIN_USER } from "../utils/mutations"; // Make sure this import is present
+import { LOGIN_USER } from "../utils/mutations";
 import Auth from "../utils/auth";
 
 const LoginForm = () => {
@@ -10,7 +10,8 @@ const LoginForm = () => {
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  const [loginUser, { error }] = useMutation(LOGIN_USER);
+  // Removed unused error from the useMutation destructuring
+  const [loginUser] = useMutation(LOGIN_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;

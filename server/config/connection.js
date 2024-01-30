@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 // Define the MongoDB connection string from the environment variable
 const mongoDBUri =
-  process.env.DB_URI || "mongodb://127.0.0.1:27017/googlebooks";
+  process.env.DB_URI || "mongodb://127.0.0.1:27017/BookSearchEngine";
 
 mongoose
   .connect(mongoDBUri, {

@@ -1,5 +1,5 @@
 // Imports
-
+import decode from "jwt-decode";
 // Create a class for user authentication
 class AuthService {
   // Method to get user data from token

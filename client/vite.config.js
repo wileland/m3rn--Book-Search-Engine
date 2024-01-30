@@ -7,10 +7,12 @@ export default defineConfig({
     port: 3000,
     open: true,
     proxy: {
-      "/api": {
+      // Proxying the /graphql endpoint
+      "/graphql": {
         target: "http://localhost:3001",
         secure: false,
         changeOrigin: true,
+        ws: true, // if you are using subscriptions over websockets
       },
     },
   },

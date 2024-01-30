@@ -1,9 +1,33 @@
+// server.js
+require("dotenv").config();
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const path = require("path");
 const db = require("./config/connection");
 const { typeDefs, resolvers } = require("./schema");
-const { authMiddleware } = require("./utils/auth");
+const jwt = require("jsonwebtoken"); // Make sure to require jsonwebtoken
+
+// Place your JWT secret key here, it should be the same used to sign the tokens
+const SECRET_KEY = process.env.JWT_SECRET;
+
+
+const authMiddleware = (req) => {
+  let token = req.headers.authorization || "";
+  token = token.split(" ").pop().trim();
+
+  let user = null;
+
+  if (token) {
+    try {
+      user = jwt.verify(token, SECRET_KEY);
+    } catch {
+      // Optionally, you could log the error or handle it if necessary
+      console.log("Invalid or expired token");
+    }
+  }
+
+  return { user };
+};
 
 async function startApolloServer() {
   const app = express();
@@ -12,11 +36,7 @@ async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: async ({ req }) => {
-      // Use the authMiddleware to populate the user in the context
-      const context = await authMiddleware(req);
-      return context;
-    },
+    context: async ({ req }) => authMiddleware(req), // Simplified for clarity
   });
 
   await server.start();
