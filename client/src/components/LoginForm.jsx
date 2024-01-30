@@ -1,4 +1,3 @@
-// Removed unused React import since React 17+ and new JSX Transform do not require it
 import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useMutation } from "@apollo/client";
@@ -9,9 +8,7 @@ const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: "", password: "" });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-
-  // Removed unused error from the useMutation destructuring
-  const [loginUser] = useMutation(LOGIN_USER);
+  const [loginUser, { loading }] = useMutation(LOGIN_USER); // Added loading state from the useMutation hook
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -21,6 +18,7 @@ const LoginForm = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
+    // Form validation logic
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.stopPropagation();
@@ -32,17 +30,12 @@ const LoginForm = () => {
         variables: { ...userFormData },
       });
 
-      const token = data.login.token;
-      Auth.login(token);
+      Auth.login(data.login.token);
+      setUserFormData({ email: "", password: "" }); // Clear form on successful login
     } catch (err) {
       console.error(err);
       setShowAlert(true);
     }
-
-    setUserFormData({
-      email: "",
-      password: "",
-    });
   };
 
   return (
@@ -86,11 +79,11 @@ const LoginForm = () => {
           </Form.Control.Feedback>
         </Form.Group>
         <Button
-          disabled={!(userFormData.email && userFormData.password)}
+          disabled={!(userFormData.email && userFormData.password) || loading}
           type="submit"
           variant="success"
         >
-          Submit
+          {loading ? "Loading..." : "Submit"}
         </Button>
       </Form>
     </>
