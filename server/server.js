@@ -4,11 +4,11 @@ const { ApolloServer } = require("apollo-server-express");
 const path = require("path");
 const db = require("./config/connection");
 const { typeDefs, resolvers } = require("./schema");
-const jwt = require("jsonwebtoken"); // Make sure to require jsonwebtoken
+const jwt = require("jsonwebtoken");
+const routes = require("./routes"); // Assuming you have an 'index.js' in your 'routes' folder which exports all routes
 
 // Place your JWT secret key here, it should be the same used to sign the tokens
 const SECRET_KEY = process.env.JWT_SECRET;
-
 
 const authMiddleware = (req) => {
   let token = req.headers.authorization || "";
@@ -35,19 +35,30 @@ async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: async ({ req }) => authMiddleware(req), // Simplified for clarity
+    context: async ({ req }) => authMiddleware(req),
   });
 
   await server.start();
-  server.applyMiddleware({ app });
 
-  app.use(express.urlencoded({ extended: true }));
+  // Middleware for parsing JSON and urlencoded form data
   app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
+  // Serve up static assets
   if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../client/build")));
+  }
+
+  // Use the Apollo server middleware
+  server.applyMiddleware({ app });
+
+  // Use routes from the routes directory
+  app.use(routes);
+
+  // Serve the React front-end in production
+  if (process.env.NODE_ENV === "production") {
     app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+      res.sendFile(path.join(__dirname, "../client/build/index.html"));
     });
   }
 

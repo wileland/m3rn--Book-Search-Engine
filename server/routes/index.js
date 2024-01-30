@@ -1,18 +1,17 @@
+const express = require("express");
 const router = require("express").Router();
 const path = require("path");
-const apiRoutes = require("./api");
+const apiRoutes = require("./api/apiRoutes"); // Assuming this path is correct
 
 // API routes
 router.use("/api", apiRoutes);
 
-// Serve the React front-end in production
-router.use((req, res, next) => {
-  try {
-    res.sendFile(path.join(__dirname, "../../client/build/index.html"));
-  } catch (error) {
-    // Handle errors or log them
-    next(error);
-  }
-});
+// In production, serve the React front-end
+if (process.env.NODE_ENV === "production") {
+  router.use(express.static(path.join(__dirname, "../client/build")));
+  router.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/build/index.html"));
+  });
+}
 
 module.exports = router;
