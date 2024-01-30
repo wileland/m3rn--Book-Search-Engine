@@ -1,5 +1,4 @@
 // server.js
-require("dotenv").config(); // Ensure you load environment variables
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const path = require("path");

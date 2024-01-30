@@ -34,8 +34,8 @@ const typeDefs = gql`
 
   type Query {
     me: User
-    // Removed 'users' and 'books' queries if they are not used in the client application
-    book(bookId: ID!): Book
+    books: [Book]
+    book(bookId: String!): Book
   }
 
   type Mutation {
@@ -43,6 +43,7 @@ const typeDefs = gql`
     addUser(username: String!, email: String!, password: String!): Auth
     saveBook(input: BookInput!): User
     removeBook(bookId: String!): User
+    addBook(input: BookInput!): User # Add this line for the 'addBook' mutation
   }
 `;
 
