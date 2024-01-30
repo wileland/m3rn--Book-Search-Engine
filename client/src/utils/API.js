@@ -1,12 +1,14 @@
-// Imports
+// API.js
 
-// Route to get logged-in user's info (requires a token)
+// Function to get logged-in user's info (requires a token)
 export const getMe = (token) => {
   return fetch("/api/users/me", {
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
+  }).catch((error) => {
+    console.error("Error fetching user data:", error);
   });
 };
 
@@ -18,6 +20,8 @@ export const createUser = (userData) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(userData),
+  }).catch((error) => {
+    console.error("Error creating user:", error);
   });
 };
 
@@ -29,18 +33,22 @@ export const loginUser = (userData) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(userData),
+  }).catch((error) => {
+    console.error("Error logging in:", error);
   });
 };
 
 // Function to save book data for a logged-in user
 export const saveBook = (bookData, token) => {
-  return fetch("/api/users", {
+  return fetch("/api/users/", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(bookData),
+  }).catch((error) => {
+    console.error("Error saving book:", error);
   });
 };
 
@@ -49,12 +57,18 @@ export const deleteBook = (bookId, token) => {
   return fetch(`/api/users/books/${bookId}`, {
     method: "DELETE",
     headers: {
-      authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
+  }).catch((error) => {
+    console.error("Error deleting book:", error);
   });
 };
 
 // Function to make a search request to the Google Books API
 export const searchGoogleBooks = (query) => {
-  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`).catch(
+    (error) => {
+      console.error("Error searching Google Books:", error);
+    }
+  );
 };

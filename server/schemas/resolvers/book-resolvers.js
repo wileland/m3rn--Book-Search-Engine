@@ -1,5 +1,5 @@
 const { AuthenticationError } = require("apollo-server-express");
-const { User, Book } = require("../models");
+const { User, Book } = require("../../models");
 
 const resolvers = {
   Query: {
@@ -8,7 +8,7 @@ const resolvers = {
       return Book.find(params).sort({ createdAt: -1 });
     },
     book: async (parent, { bookId }) => {
-      return Book.findOne({ bookId });
+      return Book.findOne({ _id, bookId });
     },
   },
   Mutation: {
