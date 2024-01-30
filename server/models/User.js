@@ -18,13 +18,15 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
+      minlength: [8, "Password must be at least 8 characters long"], // Password length validation
     },
-    savedBooks: [bookSchema],
+    savedBooks: [bookSchema], // Consider using references if appropriate
   },
   {
     toJSON: {
       virtuals: true,
     },
+    timestamps: true, // Enable timestamps
   }
 );
 
