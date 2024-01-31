@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Container, Card, Button, Row, Col } from "react-bootstrap";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_ME, REMOVE_BOOK } from "../utils/mutations"; // Replace with actual query and mutation names
-import Auth from "../utils/auth";
+import { GET_ME } from "../utils/queries.js";
 import { removeBookId } from "../utils/localStorage";
 
 const SavedBooks = () => {

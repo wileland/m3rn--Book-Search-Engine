@@ -12,7 +12,7 @@ const SignupForm = () => {
   });
   const [validated, setValidated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [addUser, { loading }] = useMutation(ADD_USER); // Use loading state from mutation
+  const [addUser, { loading }] = useMutation(ADD_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -35,7 +35,7 @@ const SignupForm = () => {
       });
 
       Auth.login(data.addUser.token);
-      setUserFormData({ username: "", email: "", password: "" }); // Clear form on successful signup
+      setUserFormData({ username: "", email: "", password: "" });
     } catch (err) {
       console.error(err);
       setShowAlert(true);
@@ -54,8 +54,48 @@ const SignupForm = () => {
       >
         Something went wrong with your signup!
       </Alert>
-      {/* Form groups for username, email, and password */}
-      {/* ... (Form groups remain unchanged) */}
+      <Form.Group controlId="formUsername">
+        <Form.Label>Username</Form.Label>
+        <Form.Control
+          type="text"
+          name="username"
+          placeholder="Enter your username"
+          value={userFormData.username}
+          onChange={handleInputChange}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          Please enter a username.
+        </Form.Control.Feedback>
+      </Form.Group>
+      <Form.Group controlId="formEmail">
+        <Form.Label>Email</Form.Label>
+        <Form.Control
+          type="email"
+          name="email"
+          placeholder="Enter your email"
+          value={userFormData.email}
+          onChange={handleInputChange}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          Please enter a valid email address.
+        </Form.Control.Feedback>
+      </Form.Group>
+      <Form.Group controlId="formPassword">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
+          type="password"
+          name="password"
+          placeholder="Enter your password"
+          value={userFormData.password}
+          onChange={handleInputChange}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          Please enter a password.
+        </Form.Control.Feedback>
+      </Form.Group>
       <Button
         disabled={
           !(
