@@ -57,6 +57,26 @@ const SearchBooks = () => {
     try {
       await saveBook({
         variables: { input: bookToSave },
+        update: (cache, { data: { saveBook } }) => {
+          const savedBookId = saveBook.bookId;
+          const data = cache.readQuery({ query: YOUR_QUERY }); // Replace YOUR_QUERY with your query to fetch saved books
+          const updatedSavedBooks = [
+            ...data.getSavedBooks,
+            {
+              _id: savedBookId,
+              authors: bookToSave.authors,
+              title: bookToSave.title,
+              description: bookToSave.description,
+              image: bookToSave.image,
+            },
+          ];
+          cache.writeQuery({
+            query: YOUR_QUERY, // Replace YOUR_QUERY with your query to fetch saved books
+            data: {
+              getSavedBooks: updatedSavedBooks,
+            },
+          });
+        },
       });
     } catch (err) {
       console.error(err);
