@@ -1,7 +1,7 @@
 // App.jsx
 import React from "react";
 import { ApolloProvider } from "@apollo/client";
-import client from "./utils/apollo"; // Import from the correct path
+import client from "./utils/apollo"; // Ensure this is the correct path to your Apollo client instance
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import "./App.css";

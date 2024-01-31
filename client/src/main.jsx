@@ -6,6 +6,7 @@ import App from "./App.jsx";
 import SearchBooks from "./pages/SearchBooks";
 import SavedBooks from "./pages/SavedBooks";
 
+// Create a router with routes
 const router = createBrowserRouter([
   {
     path: "/",
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
   },
 ]);
 
+// Render the application with the RouterProvider
 ReactDOM.createRoot(document.getElementById("root")).render(
   <RouterProvider router={router} />
 );
