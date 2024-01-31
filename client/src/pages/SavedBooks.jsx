@@ -1,69 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Container, Card, Button, Row, Col } from "react-bootstrap";
-
-import { getMe, deleteBook } from "../utils/API";
+import { useQuery, useMutation } from "@apollo/client";
+import { GET_ME, REMOVE_BOOK } from "../utils/mutations"; // Replace with actual query and mutation names
 import Auth from "../utils/auth";
 import { removeBookId } from "../utils/localStorage";
 
 const SavedBooks = () => {
-  // State to hold user data
-  const [userData, setUserData] = useState({});
+  const { loading, data, refetch } = useQuery(GET_ME);
+  const [removeBook] = useMutation(REMOVE_BOOK, {
+    onCompleted: () => refetch(),
+  });
 
-  // State to track whether to run useEffect again
-  const userDataLength = Object.keys(userData).length;
+  const userData = data?.me || {};
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-        if (!token) {
-          return false;
-        }
-
-        const response = await getMe(token);
-
-        if (!response.ok) {
-          throw new Error("something went wrong!");
-        }
-
-        const user = await response.json();
-        setUserData(user);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    getUserData();
-  }, [userDataLength]);
-
-  // Function to delete a book
   const handleDeleteBook = async (bookId) => {
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-    if (!token) {
-      return false;
-    }
-
     try {
-      const response = await deleteBook(bookId, token);
-
-      if (!response.ok) {
-        throw new Error("something went wrong!");
-      }
-
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
-      // Upon success, remove the book's id from localStorage
+      await removeBook({ variables: { bookId } });
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
     }
   };
 
-  // If data isn't here yet, display "LOADING..."
-  if (!userDataLength) {
+  if (loading) {
     return <h2>LOADING...</h2>;
+  }
+
+  if (!userData.savedBooks) {
+    return <h2>You need to be logged in to see this page.</h2>;
   }
 
   return (
