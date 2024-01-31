@@ -1,15 +1,14 @@
 const { AuthenticationError } = require("apollo-server-express");
-const { User } = require("../../models");
-const { signToken } = require("../../utils/auth");
+const { User, Book } = require("../models");
+const { signToken } = require("../utils/auth");
 
+// Combined resolvers
 const resolvers = {
   Query: {
-    // Resolver for the 'me' query to get the logged-in user's data
+    // User-related Queries
     me: async (parent, args, context) => {
-      // Check if the user is in the context (logged in)
       if (context.user) {
         try {
-          // Fetch the user information, excluding the password, and populate savedBooks
           const userInfo = await User.findOne({ _id: context.user._id })
             .select("-password")
             .populate("savedBooks");
@@ -19,15 +18,22 @@ const resolvers = {
           throw new Error("Error fetching user data.");
         }
       }
-      // If no user in context, throw an authentication error
       throw new AuthenticationError("Not logged in");
     },
+    // Book-related Queries
+    books: async (parent, { username }) => {
+      const params = username ? { username } : {};
+      return Book.find(params).sort({ createdAt: -1 });
+    },
+    book: async (parent, { bookId }) => {
+      return Book.findOne({ bookId });
+    },
   },
+
   Mutation: {
-    // Mutation for adding a new user
+    // User-related Mutations
     addUser: async (parent, { username, email, password }) => {
       try {
-        // Create a new user
         const user = await User.create({ username, email, password });
         const token = signToken(user);
         return { token, user };
@@ -36,28 +42,51 @@ const resolvers = {
         throw new Error("Something went wrong with user registration");
       }
     },
-    // Mutation for user login
     login: async (parent, { email, password }) => {
       try {
-        // Find the user by email
         const user = await User.findOne({ email }).select("+password");
         if (!user) {
           throw new AuthenticationError("Incorrect credentials");
         }
-
-        // Check if the provided password is correct
         const correctPw = await user.isCorrectPassword(password);
         if (!correctPw) {
           throw new AuthenticationError("Incorrect credentials");
         }
-
-        // If authentication is successful, sign and return the token along with user data
         const token = signToken(user);
         return { token, user: user.toObject({ virtuals: true }) };
       } catch (error) {
         console.error("Login error:", error);
         throw new Error("Error logging in");
       }
+    },
+    // Book-related Mutations
+    addBook: async (parent, { input }, context) => {
+      if (context.user) {
+        const book = await Book.create({ ...input });
+        await User.findByIdAndUpdate(
+          { _id: context.user._id },
+          { $addToSet: { savedBooks: book._id } },
+          { new: true }
+        );
+        return book;
+      }
+      throw new AuthenticationError("You need to be logged in to add a book.");
+    },
+    removeBook: async (parent, { bookId }, context) => {
+      if (context.user) {
+        const update = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $pull: { savedBooks: { bookId } } },
+          { new: true }
+        ).populate("savedBooks");
+        if (!update) {
+          throw new Error("Book not found or user not authorized.");
+        }
+        return update;
+      }
+      throw new AuthenticationError(
+        "You need to be logged in to remove a book."
+      );
     },
   },
 };

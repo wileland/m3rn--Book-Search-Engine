@@ -1,16 +1,25 @@
 // App.jsx
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
-import client from "./utils/apollo"; // Ensure this is the correct path to your Apollo client instance
-import { Outlet } from "react-router-dom";
+import client from "./utils/apollo";
+
 import Navbar from "./components/Navbar";
-import "./App.css";
+import Home from "./pages/Home"; // Assuming you have a Home component
+import SearchBooks from "./pages/SearchBooks";
+import SavedBooks from "./pages/SavedBooks";
 
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Navbar />
-      <Outlet />
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<SearchBooks />} />{" "}
+          <Route path="/search" element={<SearchBooks />} />
+          <Route path="/saved" element={<SavedBooks />} />
+        </Routes>
+      </Router>
     </ApolloProvider>
   );
 }
