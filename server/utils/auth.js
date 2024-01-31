@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
+const { AuthenticationError } = require("apollo-server-express");
 
 const secret = process.env.JWT_SECRET || "mysecretsshhhhh";
-const expiration = process.env.JWT_EXPIRATION || "2h";
+const expiration = "2h";
 
 module.exports = {
-  // Updated middleware to work with the GraphQL context
+  // Middleware for decoding JWT tokens
   authMiddleware: function ({ req }) {
     // Allow token to be sent via req.query or headers
     let token = req.query.token || req.headers.authorization;
@@ -23,14 +24,16 @@ module.exports = {
       // Decode and attach user data to the request object
       const { data } = jwt.verify(token, secret, { maxAge: expiration });
       req.user = data;
-    } catch {
-      // If there's a problem with the token, leave the request object unchanged
-      console.error("Invalid token");
+    } catch (error) {
+      console.error("Invalid token", error);
+      // Optionally, you can throw an AuthenticationError here if you want to deny the request
     }
 
     // Return the updated request object
     return req;
   },
+
+  // Function for signing JWT tokens
   signToken: function ({ username, email, _id }) {
     const payload = { username, email, _id };
 

@@ -1,6 +1,5 @@
-const { AuthenticationError } = require("apollo-server-express");
 const { User, Book } = require("../models");
-const { signToken } = require("../utils/auth");
+const { signToken, AuthenticationError } = require("../utils/auth");
 
 // Combined resolvers
 const resolvers = {
@@ -74,14 +73,20 @@ const resolvers = {
     },
     removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
+        // Remove the book from the database
+        await Book.findOneAndDelete({ _id: bookId });
+
+        // Update the user's savedBooks
         const update = await User.findOneAndUpdate(
           { _id: context.user._id },
-          { $pull: { savedBooks: { bookId } } },
+          { $pull: { savedBooks: bookId } }, // Assuming bookId is the correct identifier for savedBooks
           { new: true }
         ).populate("savedBooks");
+
         if (!update) {
           throw new Error("Book not found or user not authorized.");
         }
+
         return update;
       }
       throw new AuthenticationError(

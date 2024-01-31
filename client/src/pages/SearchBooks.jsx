@@ -1,23 +1,23 @@
 import { useState } from "react";
 import { Container, Col, Form, Button, Card, Row } from "react-bootstrap";
 import { useMutation } from "@apollo/client";
-
 import Auth from "../utils/auth";
 import { searchGoogleBooks } from "../utils/API"; // Assuming this is your custom function to search Google Books
 import { saveBookIds, getSavedBookIds } from "../utils/localStorage";
 import { SAVE_BOOK } from "../utils/mutations";
+
 
 const SearchBooks = () => {
   const [searchedBooks, setSearchedBooks] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
-  const [saveBook] = useMutation(SAVE_BOOK, {
+  const [saveBook, { error }] = useMutation(SAVE_BOOK, {
     update(cache, { data: { saveBook } }) {
-      setSavedBookIds([...savedBookIds, saveBook.bookId]);
-    },
-    onError(err) {
-      console.error(err);
+      setSavedBookIds((prevSavedBookIds) => [
+        ...prevSavedBookIds,
+        saveBook.bookId,
+      ]);
     },
   });
 
@@ -43,25 +43,26 @@ const SearchBooks = () => {
       setSearchedBooks(bookData);
       setSearchInput("");
     } catch (err) {
-      console.error(err);
+      console.error("Search error:", err);
     }
   };
 
   const handleSaveBook = async (bookId) => {
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
-    if (!token) {
-      return false;
-    }
 
     try {
       await saveBook({
         variables: { input: bookToSave },
       });
+      saveBookIds([...savedBookIds, bookId]);
     } catch (err) {
-      console.error(err);
+      console.error("Save book error:", err);
     }
   };
+
+  if (error) {
+    console.error("GraphQL error:", error.message);
+  }
 
   return (
     <>

@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcryptjs");
-const bookSchema = require("./Book");
+
 
 const userSchema = new Schema(
   {
@@ -20,15 +20,13 @@ const userSchema = new Schema(
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters long"], // Password length validation
     },
-    savedBooks: [bookSchema], // Consider using references if appropriate
-  },
-  {
-    toJSON: {
-      virtuals: true,
+    savedBooks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Book",
     },
-    timestamps: true, // Enable timestamps
-  }
-);
+  ],
+});
 
 userSchema.pre("save", async function (next) {
   if (this.isNew || this.isModified("password")) {
