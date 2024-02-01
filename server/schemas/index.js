@@ -1,16 +1,14 @@
 const typeDefs = require("./typeDefs");
-const userResolvers = require("./resolvers/user-resolvers");
-const bookResolvers = require("./resolvers/book-resolvers");
+const Resolvers = require("./resolvers");
+
 
 // Combine user and book resolvers into a single object
 const resolvers = {
   Query: {
-    ...userResolvers.Query,
-    ...bookResolvers.Query,
-  },
+    ...Resolvers.Query,
+      },
   Mutation: {
-    ...userResolvers.Mutation,
-    ...bookResolvers.Mutation,
+     ...Resolvers.Mutation,
   },
   // Add other resolver types if they exist, such as Subscription
 };
