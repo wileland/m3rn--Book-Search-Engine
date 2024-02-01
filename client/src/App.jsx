@@ -1,32 +1,28 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   createHttpLink,
 } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 
+import Navbar from "./components/Navbar";
 import SearchBooks from "./pages/SearchBooks";
 import SavedBooks from "./pages/SavedBooks";
-import Navbar from "./components/Navbar";
-import { setContext } from "@apollo/client/link/context";
-import { Outlet } from "react-router-dom";
-
 import LoginForm from "./components/LoginForm";
 import SignupForm from "./components/SignupForm";
 
+// Configuration for Apollo Client
 const httpLink = createHttpLink({
   uri: "/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
+  // Retrieve the token from local storage
   const token = localStorage.getItem("id_token");
-
   return {
     headers: {
       ...headers,
-      // If there is a token value in the local storage, set the HTTP header to include the token
       authorization: token ? `Bearer ${token}` : "",
     },
   };
@@ -43,9 +39,12 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
+          {" "}
+          {/* Update to use Routes */}
           <Route path="/" element={<SearchBooks />} />
           <Route path="/saved" element={<SavedBooks />} />
-          {/* Other routes can go here */}
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<SignupForm />} />
         </Routes>
       </Router>
     </ApolloProvider>

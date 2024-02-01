@@ -43,8 +43,5 @@ const typeDefs = gql`
     addUser(username: String!, email: String!, password: String!): Auth
     saveBook(input: BookInput!): User
     removeBook(bookId: String!): User
-    addBook(input: BookInput!): User # Add this line for the 'addBook' mutation
   }
 `;
-
-module.exports = typeDefs;
