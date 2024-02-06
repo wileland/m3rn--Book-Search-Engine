@@ -5,6 +5,7 @@ import {
   createHttpLink,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Add this import
 
 import Navbar from "./components/Navbar";
 import SearchBooks from "./pages/SearchBooks";
@@ -39,7 +40,6 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-          {" "}
           {/* Update to use Routes */}
           <Route path="/" element={<SearchBooks />} />
           <Route path="/saved" element={<SavedBooks />} />
